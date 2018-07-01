@@ -6,10 +6,19 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.zipWith
+import io.reactivex.schedulers.Schedulers
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var vText:TextView
+    var request:Disposable?=null
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(null)
@@ -23,6 +32,24 @@ class MainActivity : AppCompatActivity() {
             i.putExtra("tag1", vText.text)
 
             startActivityForResult(i,0)
+
+
+
+            val o = Observable.create<String> {
+                //net
+
+                it.onNext("Something")}.
+                    flatMap { Observable.create<String>{}}
+                    .zipWith(Observable.create<String>{})
+                    .map{it.second + it.first}
+                    .subscribeOn(Schedulers.io()).
+                    observeOn(AndroidSchedulers.mainThread())
+
+            request = o.subscribe({},{
+
+
+            })
+
 
 //            val t=object:Thread(){
 //                override fun run() {
@@ -69,6 +96,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        request?.dispose()
     }
 
 
