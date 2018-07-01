@@ -1,6 +1,7 @@
 package com.example.uber.stepikapp1
 
 import android.content.Intent
+import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -15,9 +16,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         vText = findViewById<TextView>(R.id.act1_text)
-
-
-
         vText.setTextColor(0xFFFF0000.toInt())
         vText.setOnClickListener{
             Log.e("tag","Нажата кнопка")
@@ -25,10 +23,23 @@ class MainActivity : AppCompatActivity() {
             i.putExtra("tag1", vText.text)
 
             startActivityForResult(i,0)
+
+//            val t=object:Thread(){
+//                override fun run() {
+//                    //TODO обращение в сеть
+//                    this@MainActivity.runOnUiThread{
+//
+//
+//
+//                    }
+//                }
+//            }
+//
+//            AT(this).execute()  Плохой пример с утечкой памяти
+
+
         }
-
         Log.v("tag","Запущен onCreate")
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -61,5 +72,15 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
 }
+
+//class AT(val act:MainActivity): AsyncTask<String,Int,String>(){
+//    override fun doInBackground(vararg p0: String?): String {
+//        return "XXX"
+//    }
+//
+//    override fun onPostExecute(result: String?) {
+//        super.onPostExecute(result)
+//
+//    }
+//} Даже вывод в отдельный класс не решает проблему
