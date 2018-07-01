@@ -6,11 +6,15 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
+import com.google.gson.Gson
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.zipWith
 import io.reactivex.schedulers.Schedulers
+import java.net.HttpURLConnection
+import java.net.URL
+import java.net.URLConnection
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -22,33 +26,32 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(null)
+        Log.e("tag","Turned on!")
         setContentView(R.layout.activity_main)
 
         vText = findViewById<TextView>(R.id.act1_text)
         vText.setTextColor(0xFFFF0000.toInt())
         vText.setOnClickListener{
             Log.e("tag","Нажата кнопка")
-            val i = Intent(this,SecondActivity::class.java)
-            i.putExtra("tag1", vText.text)
-
-            startActivityForResult(i,0)
-
+//            val i = Intent(this,SecondActivity::class.java)
+//            i.putExtra("tag1", vText.text)
+//            startActivityForResult(i,0)
 
 
-            val o = Observable.create<String> {
-                //net
 
-                it.onNext("Something")}.
-                    flatMap { Observable.create<String>{}}
-                    .zipWith(Observable.create<String>{})
-                    .map{it.second + it.first}
-                    .subscribeOn(Schedulers.io()).
-                    observeOn(AndroidSchedulers.mainThread())
-
-            request = o.subscribe({},{
+            val o = createRequest("https://api.rss2json.com/v1/api.json?rss_url=http%3A%2F%2Ffeeds.bbci.co.uk%2Fnews%2Frss.xml")
+                    .map{ Gson().fromJson(it,Feed::class.java) }
+                    .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 
 
-            })
+            request = o.subscribe({
+
+                for (item in it.items){
+                    Log.w("test","title:${item.title}")
+                }
+
+
+            },{Log.e("test","",it)})
 
 
 //            val t=object:Thread(){
@@ -112,3 +115,17 @@ class MainActivity : AppCompatActivity() {
 //
 //    }
 //} Даже вывод в отдельный класс не решает проблему
+
+
+
+class Feed(
+        val items:ArrayList<FeedItem>
+)
+
+
+class FeedItem(
+        val title:String,
+        val link:String,
+        val thumbnail:String,
+        val description:String
+)
