@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +25,7 @@ import java.util.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.list_view.*
 import kotlinx.android.synthetic.main.list_view.view.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,7 +48,7 @@ class MainActivity : AppCompatActivity() {
             request = o.subscribe({
 
 //                showLinearLayout(it.items)
-                showListView(it.items)
+                showRecListView(it.items)
 
             },{Log.e("test","",it)})
 
@@ -56,19 +59,24 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun showLinearLayout(feedList:ArrayList<FeedItem>){
+//    fun showLinearLayout(feedList:ArrayList<FeedItem>){
+//
+//        for (f in feedList) {
+//            val view = layoutInflater.inflate(R.layout.list_view, act1_listView,false)
+//            view.item_title.text=f.title
+//            act1_listView.addView(view)
+//        }
+//
+//    }
 
-        for (f in feedList) {
-            val view = layoutInflater.inflate(R.layout.list_view, act1_listView,false)
-            view.item_title.text=f.title
-            act1_listView.addView(view)
-        }
 
-    }
+//    fun showListView(feedList: ArrayList<FeedItem>){
+//        act1_listView.adapter = Adapter(feedList)
+//    }
 
-
-    fun showListView(feedList: ArrayList<FeedItem>){
-        act1_listView.adapter = Adapter(feedList)
+    fun showRecListView(feedList: ArrayList<FeedItem>){
+        act1_recView.adapter = RecAdapter(feedList)
+        act1_recView.layoutManager = LinearLayoutManager(this)
     }
 
 
@@ -130,6 +138,58 @@ class FeedItem(
         val thumbnail:String,
         val description:String
 )
+
+
+
+
+
+class RecAdapter(val items:ArrayList<FeedItem>):RecyclerView.Adapter<RecHolder>(){
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecHolder {
+
+        val inflater = LayoutInflater.from(parent!!.context)
+        val view = inflater.inflate(R.layout.list_view, parent,false)
+
+        return RecHolder(view)
+    }
+
+    override fun getItemCount(): Int {
+        return items.size
+    }
+
+    override fun onBindViewHolder(holder: RecHolder, position: Int) {
+
+        val item = items[position] as FeedItem
+        holder.bind(item)
+
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return super.getItemViewType(position)
+    }
+
+}
+
+
+
+
+
+
+
+
+
+class RecHolder(view:View):RecyclerView.ViewHolder(view){
+
+    fun bind(item: FeedItem){
+        itemView.item_title.text=item.title
+    }
+
+}
+
+
+
+
+
+
 
 class Adapter(val items: ArrayList<FeedItem>): BaseAdapter(){
     override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
