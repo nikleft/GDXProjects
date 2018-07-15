@@ -5,6 +5,10 @@ import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.BaseAdapter
 import android.widget.TextView
 import com.google.gson.Gson
 import io.reactivex.Observable
@@ -16,6 +20,9 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLConnection
 import java.util.*
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.list_view.*
+import kotlinx.android.synthetic.main.list_view.view.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,15 +36,6 @@ class MainActivity : AppCompatActivity() {
         Log.e("tag","Turned on!")
         setContentView(R.layout.activity_main)
 
-        vText = findViewById<TextView>(R.id.act1_text)
-        vText.setTextColor(0xFFFF0000.toInt())
-        vText.setOnClickListener{
-            Log.e("tag","Нажата кнопка")
-//            val i = Intent(this,SecondActivity::class.java)
-//            i.putExtra("tag1", vText.text)
-//            startActivityForResult(i,0)
-
-
 
             val o = createRequest("https://api.rss2json.com/v1/api.json?rss_url=http%3A%2F%2Ffeeds.bbci.co.uk%2Fnews%2Frss.xml")
                     .map{ Gson().fromJson(it,Feed::class.java) }
@@ -46,31 +44,34 @@ class MainActivity : AppCompatActivity() {
 
             request = o.subscribe({
 
-                for (item in it.items){
-                    Log.w("test","title:${item.title}")
-                }
-
+//                showLinearLayout(it.items)
+                showListView(it.items)
 
             },{Log.e("test","",it)})
 
 
-//            val t=object:Thread(){
-//                override fun run() {
-//                    //TODO обращение в сеть
-//                    this@MainActivity.runOnUiThread{
-//
-//
-//
-//                    }
-//                }
-//            }
-//
-//            AT(this).execute()  Плохой пример с утечкой памяти
 
-
-        }
         Log.v("tag","Запущен onCreate")
+
     }
+
+
+    fun showLinearLayout(feedList:ArrayList<FeedItem>){
+
+        for (f in feedList) {
+            val view = layoutInflater.inflate(R.layout.list_view, act1_listView,false)
+            view.item_title.text=f.title
+            act1_listView.addView(view)
+        }
+
+    }
+
+
+    fun showListView(feedList: ArrayList<FeedItem>){
+        act1_listView.adapter = Adapter(feedList)
+    }
+
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -129,3 +130,28 @@ class FeedItem(
         val thumbnail:String,
         val description:String
 )
+
+class Adapter(val items: ArrayList<FeedItem>): BaseAdapter(){
+    override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
+
+        val inflater = LayoutInflater.from(p2!!.context)
+        val view = p1 ?: inflater.inflate(R.layout.list_view, p2,false)
+        val item = getItem(p0) as FeedItem
+        view.item_title.text=item.title
+
+        return view
+    }
+
+    override fun getItem(p0: Int): Any {
+        return items[p0]
+    }
+
+    override fun getItemId(p0: Int): Long {
+        return p0.toLong()
+    }
+
+    override fun getCount(): Int {
+        return items.size
+    }
+
+}
