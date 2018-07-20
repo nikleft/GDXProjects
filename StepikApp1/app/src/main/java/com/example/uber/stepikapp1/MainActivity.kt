@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import com.google.gson.Gson
+import com.squareup.picasso.Picasso
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -144,9 +145,11 @@ class FeedItem(
 
 
 class RecAdapter(val items:ArrayList<FeedItem>):RecyclerView.Adapter<RecHolder>(){
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecHolder {
 
-        val inflater = LayoutInflater.from(parent!!.context)
+        val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.list_view, parent,false)
 
         return RecHolder(view)
@@ -158,7 +161,7 @@ class RecAdapter(val items:ArrayList<FeedItem>):RecyclerView.Adapter<RecHolder>(
 
     override fun onBindViewHolder(holder: RecHolder, position: Int) {
 
-        val item = items[position] as FeedItem
+        val item = items[position]
         holder.bind(item)
 
     }
@@ -181,6 +184,10 @@ class RecHolder(view:View):RecyclerView.ViewHolder(view){
 
     fun bind(item: FeedItem){
         itemView.item_title.text=item.title
+        itemView.item_desc.text=item.description
+
+        Picasso.with(itemView.item_thumb.context).load(item.thumbnail).into(itemView.item_thumb)
+
     }
 
 }
