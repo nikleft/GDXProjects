@@ -1,6 +1,7 @@
 package com.example.uber.stepikapp1
 
 import android.content.Intent
+import android.net.Uri
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -188,6 +189,12 @@ class RecHolder(view:View):RecyclerView.ViewHolder(view){
 
         Picasso.with(itemView.item_thumb.context).load(item.thumbnail).into(itemView.item_thumb)
 
+
+        itemView.setOnClickListener{
+            val i = Intent(Intent.ACTION_VIEW)
+            i.data = Uri.parse(item.link)
+            itemView.item_thumb.context.startActivity(i)
+        }
     }
 
 }
