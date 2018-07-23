@@ -36,8 +36,17 @@ class MainActivity : AppCompatActivity() {
         Log.e("tag", "Turned on!")
         setContentView(R.layout.activity_fragment)
 
-        fragmentManager.beginTransaction().replace(R.id.fragment_place, MainFragment()).commit()
+        if(savedInstanceState==null) {
+            val bundle = Bundle()
+            bundle.putString("param","value")
+            val f = MainFragment()
+            f.arguments = bundle
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_place, MainFragment())
+                    .commitAllowingStateLoss()
 
+
+        }
 
     }
 
