@@ -42,11 +42,24 @@ class MainActivity : AppCompatActivity() {
             val f = MainFragment()
             f.arguments = bundle
             fragmentManager.beginTransaction()
-                    .replace(R.id.fragment_place, MainFragment())
+                    .replace(R.id.fragment_place, f)
                     .commitAllowingStateLoss()
 
 
         }
+
+    }
+
+    fun showArticle(url: String) {
+
+            val bundle = Bundle()
+            bundle.putString("url",url)
+            val f = SecondFragment()
+            f.arguments = bundle
+            fragmentManager.beginTransaction()
+                    .add(R.id.fragment_place,f)
+                    .addToBackStack("main")
+                    .commitAllowingStateLoss()
 
     }
 
@@ -118,9 +131,9 @@ class RecHolder(view: View) : RecyclerView.ViewHolder(view) {
 
 
         itemView.setOnClickListener {
-            val i = Intent(Intent.ACTION_VIEW)
-            i.data = Uri.parse(item.link)
-            itemView.item_thumb.context.startActivity(i)
+
+            (itemView.item_thumb.context as MainActivity).showArticle(item.link)
+
         }
     }
 
