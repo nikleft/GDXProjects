@@ -28,7 +28,6 @@ import kotlin.collections.ArrayList
 class MainActivity : AppCompatActivity() {
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -36,9 +35,9 @@ class MainActivity : AppCompatActivity() {
         Log.e("tag", "Turned on!")
         setContentView(R.layout.activity_fragment)
 
-        if(savedInstanceState==null) {
+        if (savedInstanceState == null) {
             val bundle = Bundle()
-            bundle.putString("param","value")
+            bundle.putString("param", "value")
             val f = MainFragment()
             f.arguments = bundle
             fragmentManager.beginTransaction()
@@ -52,15 +51,26 @@ class MainActivity : AppCompatActivity() {
 
     fun showArticle(url: String) {
 
-            val bundle = Bundle()
-            bundle.putString("url",url)
-            val f = SecondFragment()
-            f.arguments = bundle
+        val bundle = Bundle()
+        bundle.putString("url", url)
+        val f = SecondFragment()
+        f.arguments = bundle
+
+        if (fragment_place2!=null){
+            fragment_place2.visibility=View.VISIBLE
             fragmentManager.beginTransaction()
-                    .add(R.id.fragment_place,f)
+                    .replace(R.id.fragment_place2, f)
+                    .commitAllowingStateLoss()
+
+        }
+        else {
+
+            fragmentManager.beginTransaction()
+                    .add(R.id.fragment_place, f)
                     .addToBackStack("main")
                     .commitAllowingStateLoss()
 
+        }
     }
 
 
