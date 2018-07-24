@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.Html
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -73,6 +74,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun playMusic(url: String) {
+        val i = Intent(this, PlayService::class.java)
+        i.putExtra("mp3",url)
+        startService(i)
+
+    }
+
 
 }
 
@@ -86,7 +94,8 @@ class FeedItemAPI(
         val title: String,
         val link: String,
         val thumbnail: String,
-        val description: String
+        val description: String,
+        val guid:String
 )
 
 open class Feed(
@@ -98,7 +107,8 @@ open class FeedItem(
         var title: String = "",
         var link: String = "",
         var thumbnail: String = "",
-        var description: String = ""
+        var description: String = "",
+        var guid:String =""
 ) : RealmObject()
 
 
@@ -135,14 +145,15 @@ class RecHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun bind(item: FeedItem) {
         itemView.item_title.text = item.title
-        itemView.item_desc.text = item.description
+        itemView.item_desc.text = Html.fromHtml(item.description)
 
         Picasso.with(itemView.item_thumb.context).load(item.thumbnail).into(itemView.item_thumb)
 
 
         itemView.setOnClickListener {
 
-            (itemView.item_thumb.context as MainActivity).showArticle(item.link)
+//            (itemView.item_thumb.context as MainActivity).showArticle(item.link)
+            (itemView.item_thumb.context as MainActivity).playMusic(item.guid)
 
         }
     }

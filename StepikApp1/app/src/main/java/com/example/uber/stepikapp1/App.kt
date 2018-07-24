@@ -14,5 +14,13 @@ class App: Application() {
     override fun onCreate() {
         super.onCreate()
         Realm.init(this)
+
+        val realmConfig = RealmConfiguration.Builder()
+                .schemaVersion(1)
+                .deleteRealmIfMigrationNeeded()
+                .build()
+
+        Realm.setDefaultConfiguration(realmConfig)
+
     }
 }
